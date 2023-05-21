@@ -1,0 +1,21 @@
+version: "3"
+networks:
+  proxy:
+    external: true
+    name: common_proxy
+
+services:
+  project1_client:
+    container_name: project1_client
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: bash -c "yarn start"
+    working_dir: /code/fe_qr_code
+    ports:
+      - "4004:4004"
+    volumes:
+      - .:/code/fe_qr_code:cached
+      - /code/fe_qr_code/node_modules
+    networks:
+      - proxy

@@ -1,0 +1,38 @@
+version: "3"
+networks:
+  proxy:
+    external: true
+    name: common_proxy
+
+services:
+  project1_db:
+    container_name: project1_db
+    image: "postgres:14.4-alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=31351310
+      - POSTGRES_DB=qr_code
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data/:cached
+    networks:
+      - proxy
+
+  project1_api:
+    container_name: project1_api
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    working_dir: /code/be_qr_code
+    volumes:
+      - .:/code/be_qr_code:cached
+    environment:
+      - "DB_CONNECTION=pgsql"
+      - "DB_PORT=5432"
+      - "DB_HOST=project1_db"
+      - "DB_DATABASE=qr_code"
+      - "DB_USERNAME=postgres"
+      - "DB_PASSWORD=31351310"
+    networks:
+      - proxy
